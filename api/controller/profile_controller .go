@@ -14,6 +14,16 @@ type ProfileController struct {
 	Env            *bootstrap.Env
 }
 
+func (pc *ProfileController) Find(c *gin.Context) {
+	profiles, err := pc.ProfileUsecase.Find(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, profiles)
+}
+
 func (pc *ProfileController) FindOne(c *gin.Context) {
 	userID := c.GetString("x-user-id")
 

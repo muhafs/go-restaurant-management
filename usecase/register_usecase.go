@@ -39,6 +39,15 @@ func (ru *RegisterUsecase) FindByEmail(c context.Context, email string) (user en
 	return
 }
 
+func (ru *RegisterUsecase) FindByPhone(c context.Context, phone string) (user entity.User, err error) {
+	ctx, cancel := context.WithTimeout(c, ru.ContextTimeout)
+	defer cancel()
+
+	user, err = ru.UserRepository.FindByPhone(ctx, phone)
+
+	return
+}
+
 func (ru *RegisterUsecase) CreateAccessToken(user *entity.User, secret string, expiry int) (accessToken string, err error) {
 	accessToken, err = helpers.CreateAccessToken(user, secret, expiry)
 

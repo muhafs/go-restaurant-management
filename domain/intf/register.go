@@ -11,6 +11,8 @@ type RegisterUsecase interface {
 
 	FindByEmail(c context.Context, email string) (entity.User, error)
 
+	FindByPhone(c context.Context, phone string) (entity.User, error)
+
 	CreateAccessToken(user *entity.User, secret string, expiry int) (accessToken string, err error)
 
 	CreateRefreshToken(user *entity.User, secret string, expiry int) (refreshToken string, err error)

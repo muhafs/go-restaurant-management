@@ -21,28 +21,28 @@ func NewRefreshTokenUsecase(userRepository intf.UserRepository, timeout time.Dur
 	}
 }
 
-func (lu *RefreshTokenUsecase) FindOne(c context.Context, email string) (user entity.User, err error) {
-	ctx, cancel := context.WithTimeout(c, lu.ContextTimeout)
+func (ru *RefreshTokenUsecase) FindOne(c context.Context, email string) (user entity.User, err error) {
+	ctx, cancel := context.WithTimeout(c, ru.ContextTimeout)
 	defer cancel()
 
-	user, err = lu.UserRepository.FindOne(ctx, email)
+	user, err = ru.UserRepository.FindOne(ctx, email)
 
 	return
 }
 
-func (lu *RefreshTokenUsecase) CreateAccessToken(user *entity.User, secret string, expiry int) (accessToken string, err error) {
+func (ru *RefreshTokenUsecase) CreateAccessToken(user *entity.User, secret string, expiry int) (accessToken string, err error) {
 	accessToken, err = helpers.CreateAccessToken(user, secret, expiry)
 
 	return
 }
 
-func (lu *RefreshTokenUsecase) CreateRefreshToken(user *entity.User, secret string, expiry int) (refreshToken string, err error) {
+func (ru *RefreshTokenUsecase) CreateRefreshToken(user *entity.User, secret string, expiry int) (refreshToken string, err error) {
 	refreshToken, err = helpers.CreateRefreshToken(user, secret, expiry)
 
 	return
 }
 
-func (rtu *RefreshTokenUsecase) ExtractIDFromToken(requestToken string, secret string) (id string, err error) {
+func (ru *RefreshTokenUsecase) ExtractIDFromToken(requestToken string, secret string) (id string, err error) {
 	id, err = helpers.ExtractIDFromToken(requestToken, secret)
 
 	return

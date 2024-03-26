@@ -22,5 +22,6 @@ func Setup(env *bootstrap.Env, db mongodb.Database, timeout time.Duration, gin *
 	privateRouter.Use(middleware.Authentication(env.AccessTokenSecret))
 
 	NewProfileRouter(env, db, timeout, privateRouter)
+	NewMenuRouter(env, db, timeout, privateRouter)
 	// NewTaskRouter(env, timeout, db, privateRouter)
 }

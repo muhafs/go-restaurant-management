@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,19 +29,30 @@ func (rc *RegisterController) Register(c *gin.Context) {
 		return
 	}
 
+	if _, err := rc.RegisterUsecase.FindByPhone(c, request.Phone); err == nil {
+		c.JSON(http.StatusNotFound, model.ErrorResponse{Success: false, Message: "User already exists with the given phone"})
+		return
+	}
+
 	hashed, err := helpers.HashPassword(request.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Message: err.Error()})
 		return
 	}
 
+	current := helpers.Now()
+	objectID := primitive.NewObjectID()
+
 	user := entity.User{
-		ID:        primitive.NewObjectID(),
+		ID:        objectID,
 		FirstName: request.FirstName,
 		LastName:  request.LastName,
 		Email:     request.Email,
 		Password:  hashed,
 		Phone:     request.Phone,
+		CreatedAt: *current,
+		UpdatedAt: *current,
+		UserID:    objectID.Hex(),
 	}
 
 	err = rc.RegisterUsecase.Create(c, &user)
@@ -50,9 +60,6 @@ func (rc *RegisterController) Register(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Success: false, Message: err.Error()})
 		return
 	}
-
-	log.Println(rc.Env.AccessTokenSecret)
-	log.Println(rc.Env.RefreshTokenSecret)
 
 	accessToken, err := rc.RegisterUsecase.CreateAccessToken(&user, rc.Env.AccessTokenSecret, rc.Env.AccessTokenExpiryHour)
 	if err != nil {

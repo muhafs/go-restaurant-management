@@ -14,4 +14,6 @@ type UserRepository interface {
 	FindOne(c context.Context, id string) (entity.User, error)
 
 	FindByEmail(c context.Context, email string) (entity.User, error)
+
+	FindByPhone(c context.Context, phone string) (entity.User, error)
 }

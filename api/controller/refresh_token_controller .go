@@ -21,13 +21,13 @@ func (rc *RefreshTokenController) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	id, err := rc.RefreshTokenUsecase.ExtractIDFromToken(request.RefreshToken, rc.Env.RefreshTokenSecret)
+	userID, err := rc.RefreshTokenUsecase.ExtractIDFromToken(request.RefreshToken, rc.Env.RefreshTokenSecret)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.ErrorResponse{Success: false, Message: "User not found"})
 		return
 	}
 
-	user, err := rc.RefreshTokenUsecase.FindOne(c, id)
+	user, err := rc.RefreshTokenUsecase.FindOne(c, userID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.ErrorResponse{Success: false, Message: "User not found"})
 		return

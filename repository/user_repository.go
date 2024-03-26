@@ -32,15 +32,19 @@ func (ur *UserRepository) Create(c context.Context, user *entity.User) (err erro
 }
 
 func (ur *UserRepository) Find(c context.Context) (users []entity.User, err error) {
+	// select collection
 	collection := ur.Database.Collection(ur.Collection)
 
+	// hide the password
 	opts := options.Find().SetProjection(bson.D{{Key: "password", Value: 0}})
 
+	// get all data
 	cursor, err := collection.Find(c, bson.D{}, opts)
 	if err != nil {
 		return
 	}
 
+	// extract data into variable
 	if err = cursor.All(c, &users); err != nil {
 		return
 	}
@@ -65,6 +69,14 @@ func (ur *UserRepository) FindByEmail(c context.Context, email string) (user ent
 	collection := ur.Database.Collection(ur.Collection)
 
 	err = collection.FindOne(c, bson.M{"email": email}).Decode(&user)
+
+	return
+}
+
+func (ur *UserRepository) FindByPhone(c context.Context, phone string) (user entity.User, err error) {
+	collection := ur.Database.Collection(ur.Collection)
+
+	err = collection.FindOne(c, bson.M{"phone": phone}).Decode(&user)
 
 	return
 }

@@ -20,6 +20,26 @@ func NewProfileUsecase(userRepository intf.UserRepository, timeout time.Duration
 	}
 }
 
+func (pu *ProfileUsecase) Find(c context.Context) (profiles []*model.ProfileResponse, err error) {
+	ctx, cancel := context.WithTimeout(c, pu.ContextTimeout)
+	defer cancel()
+
+	users, err := pu.UserRepository.Find(ctx)
+	if err != nil {
+		return
+	}
+
+	for _, user := range users {
+		profiles = append(profiles, &model.ProfileResponse{
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Email:     user.Email,
+		})
+	}
+
+	return
+}
+
 func (pu *ProfileUsecase) FindOne(c context.Context, userID string) (profile *model.ProfileResponse, err error) {
 	ctx, cancel := context.WithTimeout(c, pu.ContextTimeout)
 	defer cancel()
